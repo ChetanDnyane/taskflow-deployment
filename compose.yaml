@@ -1,0 +1,51 @@
+services:
+
+  postgres:
+    image: postgres:17
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: taskflow
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  auth-service:
+    build:
+      context: ../taskflow
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/taskflow
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+
+  task-service:
+    build:
+      context: ../taskservice
+    environment:
+      DB_URL: jdbc:postgresql://postgres:5432/taskflow_tasks
+      DB_USERNAME: postgres
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+    ports:
+      - "8081:8081"
+    depends_on:
+      - postgres
+
+  taskflow-ui:
+    build:
+      context: ../taskflow-ui
+    ports:
+      - "3000:80"
+    depends_on:
+      - auth-service
+      - task-service
+
+volumes:
+  postgres-data:
