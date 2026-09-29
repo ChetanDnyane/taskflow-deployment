@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth-service
+spec:
+  replicas: {{ .Values.auth.replicaCount }}
+  selector:
+    matchLabels:
+      app: auth-service
+  template:
+    metadata:
+      labels:
+        app: auth-service
+    spec:
+      containers:
+        - name: auth-service
+          image: "{{ .Values.auth.image.repository }}:{{ .Values.auth.image.tag }}"
+          imagePullPolicy: {{ .Values.auth.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.auth.port }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.auth.port }}
+            initialDelaySeconds: {{ .Values.auth.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.auth.livenessProbe.periodSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.auth.port }}
+            initialDelaySeconds: {{ .Values.auth.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.auth.readinessProbe.periodSeconds }}
+          envFrom:
+            - configMapRef:
+                name: auth-config
+            - secretRef:
+                name: taskflow-secrets

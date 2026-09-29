@@ -1,0 +1,37 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: task-service
+spec:
+  replicas: {{ .Values.task.replicaCount }}
+  selector:
+    matchLabels:
+      app: task-service
+  template:
+    metadata:
+      labels:
+        app: task-service
+    spec:
+      containers:
+        - name: task-service
+          image: "{{ .Values.task.image.repository }}:{{ .Values.task.image.tag }}"
+          imagePullPolicy: {{ .Values.task.image.pullPolicy }}
+          ports:
+            - containerPort: {{ .Values.task.port }}
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: {{ .Values.task.port }}
+            initialDelaySeconds: {{ .Values.task.livenessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.task.livenessProbe.periodSeconds }}
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: {{ .Values.task.port }}
+            initialDelaySeconds: {{ .Values.task.readinessProbe.initialDelaySeconds }}
+            periodSeconds: {{ .Values.task.readinessProbe.periodSeconds }}
+          envFrom:
+            - configMapRef:
+                name: task-config
+            - secretRef:
+                name: taskflow-secrets

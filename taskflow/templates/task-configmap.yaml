@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: task-config
+data:
+  DB_URL: {{ .Values.task.database.url | quote }}
+  DB_USERNAME: {{ .Values.task.database.username | quote }}

@@ -1,0 +1,67 @@
+auth:
+  replicaCount: 1
+  image:
+    repository: dnyanechetan/taskflow-auth-service
+    tag: latest
+    pullPolicy: Always
+  port: 8080
+  database:
+    url: jdbc:postgresql://postgres:5432/taskflow
+    username: postgres
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+
+task:
+  replicaCount: 1
+  image:
+    repository: dnyanechetan/taskflow-task-service
+    tag: latest
+    pullPolicy: Always
+  port: 8081
+  database:
+    url: jdbc:postgresql://postgres:5432/taskflow_tasks
+    username: postgres
+  livenessProbe:
+    initialDelaySeconds: 30
+    periodSeconds: 10
+  readinessProbe:
+    initialDelaySeconds: 10
+    periodSeconds: 5
+
+ui:
+  replicaCount: 1
+  image:
+    repository: dnyanechetan/taskflow-ui
+    tag: latest
+    pullPolicy: Always
+  port: 80
+
+postgres:
+  image:
+    repository: postgres
+    tag: "17"
+  port: 5432
+  username: postgres
+  database: taskflow
+  storage: 1Gi
+  initSql: |
+    CREATE DATABASE taskflow_tasks;
+
+prometheus:
+  replicaCount: 1
+  image:
+    repository: prom/prometheus
+    tag: latest
+  port: 9090
+  scrapeInterval: 15s
+
+grafana:
+  replicaCount: 1
+  image:
+    repository: grafana/grafana
+    tag: latest
+  port: 3000
