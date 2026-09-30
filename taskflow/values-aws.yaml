@@ -1,0 +1,28 @@
+auth:
+  image:
+    repository: 498814650794.dkr.ecr.ap-southeast-2.amazonaws.com/taskflow-auth-service
+    tag: latest
+    pullPolicy: Always
+  database:
+    url: jdbc:postgresql://taskflow-postgres.cb4wic2ayvq4.ap-southeast-2.rds.amazonaws.com:5432/taskflow
+    username: postgres
+
+task:
+  image:
+    repository: 498814650794.dkr.ecr.ap-southeast-2.amazonaws.com/taskflow-task-service
+    tag: latest
+    pullPolicy: Always
+  database:
+    url: jdbc:postgresql://taskflow-postgres.cb4wic2ayvq4.ap-southeast-2.rds.amazonaws.com:5432/taskflow_tasks
+    username: postgres
+
+ui:
+  image:
+    repository: 498814650794.dkr.ecr.ap-southeast-2.amazonaws.com/taskflow-ui
+    tag: latest
+    pullPolicy: Always
+  service:
+    type: LoadBalancer
+
+postgres:
+  enabled: false

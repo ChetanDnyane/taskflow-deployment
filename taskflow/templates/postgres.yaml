@@ -1,3 +1,4 @@
+{{- if .Values.postgres.enabled }}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -52,3 +53,4 @@ spec:
     - port: {{ .Values.postgres.port }}
       targetPort: {{ .Values.postgres.port }}
   type: ClusterIP
+{{- end }}

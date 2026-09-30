@@ -39,8 +39,11 @@ ui:
     tag: latest
     pullPolicy: Always
   port: 80
+  service:
+    type: ClusterIP
 
 postgres:
+  enabled: true
   image:
     repository: postgres
     tag: "17"

@@ -8,4 +8,4 @@ spec:
   ports:
     - port: {{ .Values.ui.port }}
       targetPort: {{ .Values.ui.port }}
-  type: ClusterIP
+  type: {{ .Values.ui.service.type }}
